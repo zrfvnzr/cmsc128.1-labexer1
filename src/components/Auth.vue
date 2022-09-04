@@ -27,6 +27,7 @@ export default {
       this.password = ''
     },
     doLogin() { // temp
+      // insert input length and other checks here, use this.errorInput() for errors
       document.getElementById('authMainDiv').style.display = 'none'
       this.$refs.loginDiv.style.display = 'none'
       this.$refs.registerDiv.style.display = 'none'
@@ -36,6 +37,13 @@ export default {
     doRegister() { // temp
       this.doLogin()
     },
+    errorInput(el) {
+      el.style.animation = 'shake 0.5s'
+      el.style.border = '2px solid red'
+      setTimeout(function() {
+        el.style.animation = 'none'
+      }, 500)      
+    },    
     fadeIn(el) {
       this.clicksEnabled = false
       el.style.display = 'flex'
@@ -53,7 +61,7 @@ export default {
         that.clicksEnabled = true
         el.style.display = 'none'
       }, 300)
-    },    
+    },
     showAuth(initial) {
       this.toggleWindow(initial)
       document.getElementById('authMainDiv').style.display = 'flex'
@@ -191,5 +199,18 @@ export default {
  to {
   opacity: 0;
  }
+}
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
 </style>
