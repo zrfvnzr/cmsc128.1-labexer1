@@ -19,6 +19,34 @@ export default {
     this.$refs.registerDiv.style.display = 'none'
   },
   methods: {
+    checkInputs(mode) { // mode = 'login' || 'register'
+      console.log('checkInputs called with param ', mode)
+      if (mode === 'login') {
+        if (document.getElementById('loginInput').value === '') {
+          alert('empty username input') // temp
+          this.errorInput(document.getElementById('loginInput'))
+          return false
+        }
+        if (document.getElementById('loginPassword').value === '') {
+          alert('empty password input') // temp
+          this.errorInput(document.getElementById('loginPassword'))
+          return false
+        }
+        alert('checks passed') // temp
+        return true
+      } else { // if mode === 'register'
+        if (document.getElementById('loginInput').value === '') {
+          alert('empty username input') // temp
+          return false
+        }
+        if (document.getElementById('loginPassword').value === '') {
+          alert('empty password input') // temp
+          return false
+        }
+        alert('checks passed') // temp
+        return true  
+      }
+    }, 
     clearInputFields() {
       document.querySelectorAll('.authInput').forEach(el => {
         el.value = ''
@@ -27,7 +55,12 @@ export default {
       this.password = ''
     },
     doLogin() { // temp
-      // insert input length and other checks here, use this.errorInput() for errors
+      if (this.checkInputs('login')) {
+        alert('checks passed on doLogin') // temp
+      } else {
+        alert('checks failed on doLogin') // temp
+        return
+      }
       document.getElementById('authMainDiv').style.display = 'none'
       this.$refs.loginDiv.style.display = 'none'
       this.$refs.registerDiv.style.display = 'none'
@@ -35,6 +68,11 @@ export default {
       this.$emit('loggedIn')
     },
     doRegister() { // temp
+      if (this.checkInputs('register')) {
+        alert('checks passed on doRegister') // temp
+      } else {
+        alert('checks failed on doRegister') // temp
+      }
       this.doLogin()
     },
     errorInput(el) {
