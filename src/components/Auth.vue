@@ -1,0 +1,195 @@
+<script>
+export default {
+  name: 'Auth',
+  emits: ['loggedIn', 'loggedOut'],
+  props: {
+    
+  },
+  data() {
+    return {
+      clicksEnabled: true,
+      username: '',
+      password: '',
+    }
+  },
+  mounted() {
+    this.clearInputFields()
+    document.getElementById('authMainDiv').style.display = 'none'
+    this.$refs.loginDiv.style.display = 'none'
+    this.$refs.registerDiv.style.display = 'none'
+  },
+  methods: {
+    clearInputFields() {
+      document.querySelectorAll('.authInput').forEach(el => {
+        el.value = ''
+      })
+      this.username = ''
+      this.password = ''
+    },
+    doLogin() { // temp
+      document.getElementById('authMainDiv').style.display = 'none'
+      this.$refs.loginDiv.style.display = 'none'
+      this.$refs.registerDiv.style.display = 'none'
+      alert('logged in as ', this.username) // temp
+      this.$emit('loggedIn')
+    },
+    doRegister() { // temp
+      this.doLogin()
+    },
+    fadeIn(el) {
+      this.clicksEnabled = false
+      el.style.display = 'flex'
+      el.style.animation = 'fadeIn 0.3s forwards'
+      let that = this
+      setTimeout(function() {
+        that.clicksEnabled = true
+      }, 300)
+    },
+    fadeOut(el) {
+      this.clicksEnabled = false
+      el.style.animation = 'fadeOut 0.3s forwards'
+      let that = this
+      setTimeout(function() {
+        that.clicksEnabled = true
+        el.style.display = 'none'
+      }, 300)
+    },    
+    showAuth(initial) {
+      this.toggleWindow(initial)
+      document.getElementById('authMainDiv').style.display = 'flex'
+    },
+    toggleWindow(to) {
+      if (!this.clicksEnabled) {
+        return
+      }
+      this.clearInputFields()
+      if (to === 'login') {
+        this.fadeIn(this.$refs.loginDiv)
+        if (this.$refs.registerDiv.style.display !== 'none') {
+          this.fadeOut(this.$refs.registerDiv)
+        }
+      } else {
+        this.fadeIn(this.$refs.registerDiv)
+        if (this.$refs.loginDiv.style.display !== 'none') {
+          this.fadeOut(this.$refs.loginDiv)
+        }
+      }
+      console.log('toggleWindow finishes')
+    }
+  }
+}
+</script>
+  
+<template>
+<!-- AUTH CONTAINER -->
+<div id="authMainDiv">
+  <!-- LOGIN FORM -->
+  <div class="form" id="authLoginDiv" ref="loginDiv">
+    <h3>Login</h3>
+    <label for="loginInput">Username</label>
+    <input @keyup.enter="doLogin()" v-model="username" class="authInput" id="loginInput" type="text">
+    <label for="loginPassword">Password</label>
+    <input @keyup.enter="doLogin()" v-model="password" class="authInput" id="loginPassword" type="password">
+    <button @click="doLogin()">Login</button>
+    <span>Don't have an account? <a href="#" @click="toggleWindow('register')">Register</a>.</span>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div class="form" id="authRegisterDiv" ref="registerDiv">
+    <h3>Register</h3>
+    <label for="registerInput">Username</label>
+    <input @keyup.enter="doRegister()" v-model="username" class="authInput" id="registerInput" type="text">
+    <label for="registerPassword">Password</label>
+    <input @keyup.enter="doRegister()" v-model="password" class="authInput" id="registerPassword" type="password">
+    <button @click="doRegister()">Register</button>
+    <span>Already have an account? <a href="#" @click="toggleWindow('login')">Login</a>.</span>
+  </div>
+</div>
+</template>
+
+<style scoped>
+#authMainDiv {
+  background-color: rgba(0, 0, 0, 0.75);  
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+}
+
+  #authLoginDiv, #authRegisterDiv {
+    align-items: center;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 400px;
+    justify-content: center;
+    left: 50%;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+  }
+
+  #authMainDiv > div > h3 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;    
+  }
+
+  #authMainDiv > div > label {
+    cursor: text;
+  }
+
+  #authMainDiv > div > input {
+    padding: 0.3rem 0.7rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 1px solid;
+    outline: none;
+  }
+
+  #authMainDiv > div > button {
+    margin-top: 1rem;
+    padding: 0.3em 1em;
+    font-size: 1rem;
+    background: transparent;
+    border-radius: 5px;
+    border: 2px solid black;
+    cursor: pointer;
+    outline: none;
+    transition-duration: 0.3s;
+    transform-origin: center;
+    transition-property: transform;      
+  }
+
+    #authMainDiv > div > button:hover {
+      transform: scale(1.1)
+    }
+
+  #authMainDiv > div a {
+    color: rgb(17, 195, 17);
+    text-decoration: none;
+  }
+
+</style>
+
+<style>
+@keyframes fadeIn {
+ from {
+  opacity: 0;
+ }
+ to {
+  opacity: 1;
+ }
+}
+@keyframes fadeOut {
+ from {
+  opacity: 1;
+ }
+ to {
+  opacity: 0;
+ }
+}
+</style>
