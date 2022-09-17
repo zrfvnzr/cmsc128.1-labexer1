@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "realm-web": "^1.7.1",
     "vue": "^3.2.37"
   },
   "devDependencies": {

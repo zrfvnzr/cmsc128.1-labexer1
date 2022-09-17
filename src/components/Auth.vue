@@ -1,4 +1,5 @@
 <script>
+import * as Realm from 'realm-web'
 export default {
   name: 'Auth',
   emits: ['loggedIn', 'loggedOut'],
@@ -13,6 +14,7 @@ export default {
     }
   },
   mounted() {
+    this.mongoDBRealmTest() // temp    
     this.clearInputFields()
     document.getElementById('authMainDiv').style.display = 'none'
     this.$refs.loginDiv.style.display = 'none'
@@ -22,28 +24,30 @@ export default {
     checkInputs(mode) { // mode = 'login' || 'register'
       console.log('checkInputs called with param ', mode)
       if (mode === 'login') {
-        if (document.getElementById('loginInput').value === '') {
-          alert('empty username input') // temp
-          this.errorInput(document.getElementById('loginInput'))
+        if (document.getElementById('loginUsername').value === '') {
+          // alert('empty username input') // temp
+          this.errorInput(document.getElementById('loginUsername'))
           return false
         }
         if (document.getElementById('loginPassword').value === '') {
-          alert('empty password input') // temp
+          // alert('empty password input') // temp
           this.errorInput(document.getElementById('loginPassword'))
           return false
         }
-        alert('checks passed') // temp
+        // alert('checks passed') // temp
         return true
       } else { // if mode === 'register'
-        if (document.getElementById('loginInput').value === '') {
-          alert('empty username input') // temp
+        if (document.getElementById('registerUsername').value === '') {
+          // alert('empty username input') // temp
+          this.errorInput(document.getElementById('registerUsername'))
           return false
         }
-        if (document.getElementById('loginPassword').value === '') {
-          alert('empty password input') // temp
+        if (document.getElementById('registerPassword').value === '') {
+          // alert('empty password input') // temp
+          this.errorInput(document.getElementById('registerPassword'))
           return false
         }
-        alert('checks passed') // temp
+        // alert('checks passed') // temp
         return true  
       }
     }, 
@@ -56,9 +60,9 @@ export default {
     },
     doLogin() { // temp
       if (this.checkInputs('login')) {
-        alert('checks passed on doLogin') // temp
+        // alert('checks passed on doLogin') // temp
       } else {
-        alert('checks failed on doLogin') // temp
+        // alert('checks failed on doLogin') // temp
         return
       }
       document.getElementById('authMainDiv').style.display = 'none'
@@ -69,9 +73,9 @@ export default {
     },
     doRegister() { // temp
       if (this.checkInputs('register')) {
-        alert('checks passed on doRegister') // temp
+        // alert('checks passed on doRegister') // temp
       } else {
-        alert('checks failed on doRegister') // temp
+        // alert('checks failed on doRegister') // temp
       }
       this.doLogin()
     },
@@ -80,6 +84,7 @@ export default {
       el.style.border = '2px solid red'
       setTimeout(function() {
         el.style.animation = 'none'
+        el.style.border = '1px solid black'
       }, 500)      
     },    
     fadeIn(el) {
@@ -100,6 +105,19 @@ export default {
         el.style.display = 'none'
       }, 300)
     },
+    async mongoDBRealmTest() {
+      // Add your APP ID
+      let APP_ID = 'application-0-rfndu'
+      const realmApp = new Realm.App({ id: APP_ID });
+      // Create an anonymous credential
+      const credentials = Realm.Credentials.anonymous();
+      // Authenticate the user
+      const user = await realmApp.logIn(credentials);
+      // `App.currentUser` updates to match the logged in user
+      // console.log(user.id === app.currentUser.id); 
+      // health function call
+      console.log(await user.functions.health())
+    },    
     showAuth(initial) {
       this.toggleWindow(initial)
       document.getElementById('authMainDiv').style.display = 'flex'
@@ -120,7 +138,7 @@ export default {
           this.fadeOut(this.$refs.loginDiv)
         }
       }
-      console.log('toggleWindow finishes')
+      // console.log('toggleWindow finishes')
     }
   }
 }
@@ -132,8 +150,8 @@ export default {
   <!-- LOGIN FORM -->
   <div class="form" id="authLoginDiv" ref="loginDiv">
     <h3>Login</h3>
-    <label for="loginInput">Username</label>
-    <input @keyup.enter="doLogin()" v-model="username" class="authInput" id="loginInput" type="text">
+    <label for="loginUsername">Username</label>
+    <input @keyup.enter="doLogin()" v-model="username" class="authInput" id="loginUsername" type="text">
     <label for="loginPassword">Password</label>
     <input @keyup.enter="doLogin()" v-model="password" class="authInput" id="loginPassword" type="password">
     <button @click="doLogin()">Login</button>
@@ -143,8 +161,8 @@ export default {
   <!-- REGISTER FORM -->
   <div class="form" id="authRegisterDiv" ref="registerDiv">
     <h3>Register</h3>
-    <label for="registerInput">Username</label>
-    <input @keyup.enter="doRegister()" v-model="username" class="authInput" id="registerInput" type="text">
+    <label for="registerUsername">Username</label>
+    <input @keyup.enter="doRegister()" v-model="username" class="authInput" id="registerUsername" type="text">
     <label for="registerPassword">Password</label>
     <input @keyup.enter="doRegister()" v-model="password" class="authInput" id="registerPassword" type="password">
     <button @click="doRegister()">Register</button>
@@ -203,6 +221,7 @@ export default {
     background: transparent;
     border-radius: 5px;
     border: 2px solid black;
+    box-shadow: 0px 0px 5px 0px gray;
     cursor: pointer;
     outline: none;
     transition-duration: 0.3s;
