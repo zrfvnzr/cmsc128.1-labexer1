@@ -9,12 +9,14 @@ export default {
   data() {
     return {
       clicksEnabled: true,
+      loggingIn: false,
+      user: {},
       username: '',
       password: '',
     }
   },
   mounted() {
-    this.mongoDBRealmTest() // temp    
+    // this.mongoDBRealmLogin() // temp    
     this.clearInputFields()
     document.getElementById('authMainDiv').style.display = 'none'
     this.$refs.loginDiv.style.display = 'none'
@@ -58,26 +60,67 @@ export default {
       this.username = ''
       this.password = ''
     },
-    doLogin() { // temp
+    async doLogin() { // temp
+      if (!this.clicksEnabled) {
+        console.log('nope') // temp
+        return
+      }
+      this.clicksEnabled = false
+      this.loggingIn = true
       if (this.checkInputs('login')) {
         // alert('checks passed on doLogin') // temp
       } else {
         // alert('checks failed on doLogin') // temp
         return
       }
-      document.getElementById('authMainDiv').style.display = 'none'
-      this.$refs.loginDiv.style.display = 'none'
-      this.$refs.registerDiv.style.display = 'none'
-      alert('logged in as ', this.username) // temp
-      this.$emit('loggedIn')
+      // alert('logged in as ', this.username) // temp
+      // login api
+      // let APP_ID = 'application-0-rfndu'
+      // const realmApp = new Realm.App({ id: APP_ID });
+      // const credentials = Realm.Credentials.anonymous();
+      // const user = await realmApp.logIn(credentials);
+      // console.log(await user.functions.login(this.username, this.password))
+      let response = await this.user.functions.login(this.username, this.password)    
+      console.log('response:', response)
+      if (response === 'true') {
+        // login success
+        console.log('login success') // temp
+        this.$emit('loggedIn', this.username)
+        document.getElementById('authMainDiv').style.display = 'none'
+        this.$refs.loginDiv.style.display = 'none'
+        this.$refs.registerDiv.style.display = 'none'        
+      } else {
+        this.errorInput(document.getElementById('loginUsername'))
+        this.errorInput(document.getElementById('loginPassword'))
+      }
+      this.clicksEnabled = true
+      this.loggingIn = false
+      // this.$emit('loggedIn')
     },
-    doRegister() { // temp
+    async doRegister() { // temp
+      if (!this.clicksEnabled) {
+        console.log('nope') // temp
+        return
+      }     
       if (this.checkInputs('register')) {
         // alert('checks passed on doRegister') // temp
       } else {
         // alert('checks failed on doRegister') // temp
       }
-      this.doLogin()
+      this.clicksEnabled = false
+      this.loggingIn = true      
+      // register api
+      let response = await this.user.functions.register(this.username, this.password)
+      console.log('response:', response)
+      this.clicksEnabled = true
+      this.loggingIn = false
+      if (response === 'true') {
+        // register success
+        this.doLogin()
+      } else {
+        this.errorInput(document.getElementById('registerUsername'))
+        this.errorInput(document.getElementById('registerPassword'))  
+      }
     },
     errorInput(el) {
       el.style.animation = 'shake 0.5s'
@@ -105,18 +148,22 @@ export default {
         el.style.display = 'none'
       }, 300)
     },
-    async mongoDBRealmTest() {
+    async mongoDBRealmLogin() {
       // Add your APP ID
       let APP_ID = 'application-0-rfndu'
       const realmApp = new Realm.App({ id: APP_ID });
       // Create an anonymous credential
-      const credentials = Realm.Credentials.anonymous();
+      // const credentials = Realm.Credentials.anonymous();
       // Authenticate the user
-      const user = await realmApp.logIn(credentials);
+      // const user = await realmApp.logIn(credentials);
       // `App.currentUser` updates to match the logged in user
       // console.log(user.id === app.currentUser.id); 
       // health function call
-      console.log(await user.functions.health())
+      // console.log(await user.functions.health())
+
+      const credentials = Realm.Credentials.apiKey('z1lIrBlAixb8c6l4m2FhEB7i8CgGyMQsZoVvQ3dLtInq6v0OV05qokiPyqTy10Yr')
+      this.user = await realmApp.logIn(credentials)
+      console.log(await this.user.functions.health())
     },    
     showAuth(initial) {
       this.toggleWindow(initial)
@@ -154,7 +201,10 @@ export default {
     <input @keyup.enter="doLogin()" v-model="username" class="authInput" id="loginUsername" type="text">
     <label for="loginPassword">Password</label>
     <input @keyup.enter="doLogin()" v-model="password" class="authInput" id="loginPassword" type="password">
-    <button @click="doLogin()">Login</button>
+    <button @click="doLogin()">
+      <span v-if="!loggingIn">Login</span>
+      <img v-else src="../assets/Dual Ball-1.4s-200px.svg" style="height: 1em; width: 1em;">
+    </button>
     <span>Don't have an account? <a href="#" @click="toggleWindow('register')">Register</a>.</span>
   </div>
 
@@ -165,7 +215,10 @@ export default {
     <input @keyup.enter="doRegister()" v-model="username" class="authInput" id="registerUsername" type="text">
     <label for="registerPassword">Password</label>
     <input @keyup.enter="doRegister()" v-model="password" class="authInput" id="registerPassword" type="password">
-    <button @click="doRegister()">Register</button>
+    <button @click="doRegister()">
+      <span v-if="!loggingIn">Register</span>
+      <img v-else src="../assets/Dual Ball-1.4s-200px.svg" style="height: 1em; width: 1em;">
+    </button>
     <span>Already have an account? <a href="#" @click="toggleWindow('login')">Login</a>.</span>
   </div>
 </div>

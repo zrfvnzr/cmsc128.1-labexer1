@@ -4,13 +4,36 @@ export default {
   components: {
     Auth
   },
+  data() {
+    return {
+      isLoggedIn: false,
+      username: ''
+    }
+  },
   methods: {
+    async initialMongoDBRealm() {
+      await this.$refs.auth.mongoDBRealmLogin()
+    },
+    loggedIn(username) {
+      this.username = username
+      this.isLoggedIn = true
+      console.log('loggedIn called with param:', username)
+    },
+    logOut() {
+      this.isLoggedIn = false,
+      this.username = ''
+      this.showAuth('login')
+    },
     showAuth(initial) {
       this.$refs.auth.showAuth(initial)
     }
   },
-  mounted() {
-    console.log('mounted')
+  async mounted() {
+    await this.initialMongoDBRealm()
+    document.getElementById('appMainDiv').style.display = 'flex'
+    // console.log('this')
+    this.showAuth('login')
+    // console.log('mounted')
   }
 }
 </script>
@@ -22,9 +45,16 @@ export default {
   </h1>
   <br>
   <h3>Basic Login System Created by <u>John Paolo M. Licup</u></h3>
-  <button @click="showAuth('login')" class="myButtons">Login</button>
-  <button @click="showAuth('register')" class="myButtons">Register</button>
-<Auth ref="auth"/>
+  <div v-if="!this.isLoggedIn" style="display: flex; flex-direction: column; justify-content: center;">
+    <button @click="showAuth('login')" class="myButtons">Login</button>
+    <button @click="showAuth('register')" class="myButtons">Register</button>
+  </div>
+  <div v-else style="display: flex; flex-direction: column; justify-content: center;">
+    <br>
+    <h3 style="color: blue;">Logged in as <u>{{username}}</u></h3>
+    <button @click="logOut()" class="myButtons">Logout</button>
+  </div>
+<Auth ref="auth" @loggedIn="loggedIn"/>
 </div>
 </template>
 
@@ -37,7 +67,7 @@ export default {
 }
 #appMainDiv {
   align-items: center;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   height: 100vh;
