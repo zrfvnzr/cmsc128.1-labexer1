@@ -203,7 +203,7 @@ export default {
     <input @keyup.enter="doLogin()" v-model="password" class="authInput" id="loginPassword" type="password">
     <button @click="doLogin()">
       <span v-if="!loggingIn">Login</span>
-      <img v-else src="../assets/Dual Ball-1.4s-200px.svg" style="height: 1em; width: 1em;">
+      <img v-else src="../assets/loading.svg" style="height: 1em; width: 1em;">
     </button>
     <span>Don't have an account? <a href="#" @click="toggleWindow('register')">Register</a>.</span>
   </div>
@@ -217,7 +217,7 @@ export default {
     <input @keyup.enter="doRegister()" v-model="password" class="authInput" id="registerPassword" type="password">
     <button @click="doRegister()">
       <span v-if="!loggingIn">Register</span>
-      <img v-else src="../assets/Dual Ball-1.4s-200px.svg" style="height: 1em; width: 1em;">
+      <img v-else src="../assets/loading.svg" style="height: 1em; width: 1em;">
     </button>
     <span>Already have an account? <a href="#" @click="toggleWindow('login')">Login</a>.</span>
   </div>
